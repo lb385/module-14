@@ -53,52 +53,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Start backend service
-      env:
-        DATABASE_URL: postgresql://authuser:authpassword@localhost:5432/auth_db
-        FLASK_ENV: development
-        JWT_SECRET_KEY: test-jwt-secret-key
-      run: |
-        cd backend
-        python app.py &
-        sleep 3
-
-    - name: Wait for backend readiness
-      run: |
-        for i in {1..30}; do
-          if curl -fs http://localhost:5000/health >/dev/null; then
-            echo "Backend is ready"
-            exit 0
-          fi
-          sleep 2
-        done
-        echo "Backend did not become ready in time"
-        exit 1
-
     - name: Install Playwright
       run: |
         pip install playwright
         playwright install chromium
 
-    - name: Start frontend server
-      run: |
-        cd frontend
-        python -m http.server 3000 &
-        sleep 2
-
-    - name: Wait for frontend readiness
-      run: |
-        for i in {1..15}; do
-          if curl -fs http://localhost:3000 >/dev/null; then
-            echo "Frontend is ready"
-            exit 0
-          fi
-          sleep 1
-        done
-        echo "Frontend did not become ready in time"
-        exit 1
-
     - name: Run Playwright E2E tests
+      env:
+        DATABASE_URL: postgresql://authuser:authpassword@localhost:5432/auth_db
+        FLASK_ENV: development
+        JWT_SECRET_KEY: test-jwt-secret-key
       run: |
         mkdir -p test-results
         pytest tests/test_auth.py -v --tb=short
