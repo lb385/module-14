@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="auth-container">
+            <div id="login-form" class="form-container">
+                <h1>Login</h1>
+                <form id="login" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input 
+                            type="email" 
+                            id="login-email" 
+                            name="email" 
+                            required
+                            placeholder="Enter your email"
+                        >
+                        <span class="error" id="login-email-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            name="password" 
+                            required
+                            placeholder="Enter your password"
+                        >
+                        <span class="error" id="login-password-error"></span>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                    <p class="toggle-text">
+                        Don't have an account? <a href="#" onclick="toggleForms(event)">Register</a>
+                    </p>
+                </form>
+                <div id="login-message" class="message"></div>
+            </div>
+
+            <div id="register-form" class="form-container" style="display: none;">
+                <h1>Register</h1>
+                <form id="register" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="register-email">Email:</label>
+                        <input 
+                            type="email" 
+                            id="register-email" 
+                            name="email" 
+                            required
+                            placeholder="Enter your email"
+                        >
+                        <span class="error" id="register-email-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-username">Username:</label>
+                        <input 
+                            type="text" 
+                            id="register-username" 
+                            name="username" 
+                            required
+                            minlength="3"
+                            placeholder="Enter your username"
+                        >
+                        <span class="error" id="register-username-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password:</label>
+                        <input 
+                            type="password" 
+                            id="register-password" 
+                            name="password" 
+                            required
+                            minlength="8"
+                            placeholder="Enter a password (min 8 characters)"
+                        >
+                        <span class="error" id="register-password-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password:</label>
+                        <input 
+                            type="password" 
+                            id="register-confirm-password" 
+                            name="confirm_password" 
+                            required
+                            placeholder="Confirm your password"
+                        >
+                        <span class="error" id="register-confirm-password-error"></span>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                    <p class="toggle-text">
+                        Already have an account? <a href="#" onclick="toggleForms(event)">Login</a>
+                    </p>
+                </form>
+                <div id="register-message" class="message"></div>
+            </div>
+        </div>
+
+        <div id="dashboard" style="display: none;">
+            <div class="dashboard-container">
+                <h1>Welcome!</h1>
+                <div id="user-info" class="user-info"></div>
+                <button onclick="logout()" class="btn btn-logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

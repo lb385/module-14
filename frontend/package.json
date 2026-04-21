@@ -1,0 +1,24 @@
+{
+  "name": "jwt-auth-app-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for JWT authentication application",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 3000",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug"
+  },
+  "keywords": [
+    "jwt",
+    "authentication",
+    "login",
+    "register"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "playwright": "^1.40.0"
+  }
+}
