@@ -30,15 +30,15 @@ jobs:
           - 5432:5432
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
     - name: Cache Python dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -61,7 +61,7 @@ jobs:
         sleep 3
 
     - name: Set up Node.js for frontend
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
 
@@ -79,6 +79,7 @@ jobs:
     - name: Run Playwright E2E tests
       run: |
         pytest tests/test_auth.py -v --tb=short
+        mkdir -p test-results
 
     - name: Upload test results
       if: always()
@@ -86,20 +87,21 @@ jobs:
       with:
         name: playwright-report
         path: test-results/
+        if-no-files-found: ignore
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
 
     - name: Log in to Docker Hub
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         context: .
         push: true
@@ -111,4 +113,4 @@ jobs:
 
     - name: Image digest
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-      run: echo ${{ steps.docker_build.outputs.digest }}
+      run: echo "Docker image built and pushed successfully"
