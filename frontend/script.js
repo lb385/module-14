@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = window.AUTH_APP_CONFIG?.apiUrl || 'http://localhost:5000';
 
 // ==================== Utility Functions ====================
 

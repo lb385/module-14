@@ -3,7 +3,7 @@ from playwright.sync_api import sync_playwright, expect
 import time
 
 BASE_URL = "http://localhost:3000"  # Frontend URL (serve with simple server)
-API_URL = "http://localhost:5000"   # Backend API
+API_URL = "http://localhost:5050"   # Backend API
 
 # Test data
 VALID_EMAIL = "testuser@example.com"
@@ -26,6 +26,7 @@ def browser():
 def page(browser):
     """Page fixture for each test."""
     page = browser.new_page()
+    page.add_init_script("window.AUTH_APP_CONFIG = { apiUrl: 'http://localhost:5050' };")
     yield page
     page.close()
 
@@ -36,7 +37,7 @@ class TestRegistration:
         """Test that the registration page loads successfully."""
         page.goto(BASE_URL)
         # Switch to registration form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Check if registration form is visible
         email_input = page.locator('#register-email')
@@ -52,7 +53,7 @@ class TestRegistration:
         """Test successful registration with valid data."""
         page.goto(BASE_URL)
         # Switch to registration form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Fill in the form
         page.locator('#register-email').fill(VALID_EMAIL)
@@ -66,7 +67,7 @@ class TestRegistration:
         # Wait for success message
         success_message = page.locator('#register-message')
         expect(success_message).to_contain_text("successful")
-        expect(success_message).to_have_class("success")
+        expect(success_message).to_contain_class("success")
         
         # Check if dashboard is shown (user is logged in)
         page.wait_for_timeout(2000)
@@ -77,7 +78,7 @@ class TestRegistration:
         """Test registration with a password that's too short."""
         page.goto(BASE_URL)
         # Switch to registration form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Fill in the form with short password
         page.locator('#register-email').fill(VALID_EMAIL)
@@ -94,7 +95,7 @@ class TestRegistration:
         """Test registration with mismatched passwords."""
         page.goto(BASE_URL)
         # Switch to registration form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Fill in the form with mismatched passwords
         page.locator('#register-email').fill(VALID_EMAIL)
@@ -111,7 +112,7 @@ class TestRegistration:
         """Test registration with invalid email format."""
         page.goto(BASE_URL)
         # Switch to registration form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Fill in the form with invalid email
         page.locator('#register-email').fill(INVALID_EMAIL)
@@ -125,7 +126,7 @@ class TestRegistration:
         """Test registration with username that's too short."""
         page.goto(BASE_URL)
         # Switch to registration form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Fill in the form with short username
         page.locator('#register-email').fill(VALID_EMAIL)
@@ -156,7 +157,7 @@ class TestLogin:
         """Test successful login with correct credentials."""
         # First, register a user
         page.goto(BASE_URL)
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         test_email = f"login_test_{int(time.time())}@example.com"
         test_username = f"user_{int(time.time())}"
@@ -207,7 +208,7 @@ class TestLogin:
         error_message = page.locator('#login-message')
         page.wait_for_timeout(1000)
         expect(error_message).to_contain_text("Invalid")
-        expect(error_message).to_have_class("error")
+        expect(error_message).to_contain_class("error")
     
     def test_login_with_invalid_email(self, page):
         """Test login with invalid email format."""
@@ -246,7 +247,7 @@ class TestFormToggling:
         assert login_form.is_visible()
         
         # Click on register link
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         # Check register form is now visible
         register_form = page.locator('#register-form')
@@ -257,12 +258,12 @@ class TestFormToggling:
         page.goto(BASE_URL)
         
         # Switch to register form
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         register_form = page.locator('#register-form')
         assert register_form.is_visible()
         
         # Click on login link
-        page.locator("text=Login").click()
+        page.get_by_role("link", name="Login").click()
         
         # Check login form is now visible
         login_form = page.locator('#login-form')
@@ -276,7 +277,7 @@ class TestTokenHandling:
         page.goto(BASE_URL)
         
         # Register a new user
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         test_email = f"token_test_{int(time.time())}@example.com"
         test_username = f"user_{int(time.time())}"
@@ -300,7 +301,7 @@ class TestTokenHandling:
         page.goto(BASE_URL)
         
         # Register and login
-        page.locator("text=Register").click()
+        page.get_by_role("link", name="Register").click()
         
         test_email = f"logout_test_{int(time.time())}@example.com"
         test_username = f"user_{int(time.time())}"
