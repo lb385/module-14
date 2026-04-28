@@ -50,7 +50,7 @@ jobs:
         JWT_SECRET_KEY: test-jwt-secret-key
       run: |
         mkdir -p test-results
-        pytest tests/test_auth.py -v --tb=short
+        pytest tests/test_auth.py tests/test_calculations.py -v --tb=short
 
     - name: Upload test results
       if: always()

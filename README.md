@@ -26,11 +26,25 @@ A modern, full-stack authentication application with JWT-based login and registr
 - **Password Hashing**: Secure password storage using werkzeug
 - **Pydantic Validation**: Strong data validation for all requests
 - **CORS Support**: Allow frontend communication across origins
+- **BREAD Calculation Endpoints**: 
+  - Browse: GET /calculations - Retrieve all user calculations
+  - Read: GET /calculations/{id} - Get specific calculation details
+  - Edit: PATCH /calculations/{id} - Update calculations
+  - Add: POST /calculations - Create new calculations
+  - Delete: DELETE /calculations/{id} - Remove calculations
+- **Automatic Calculation**: Supports add, subtract, multiply, and divide operations
 
 ### Frontend
 - **Registration Page**: User-friendly registration form with validation
 - **Login Page**: Simple login interface
-- **Client-side Validation**: Email format and password requirements
+- **Dashboard**: Main application interface after authentication
+- **Calculation Management**: 
+  - Create calculations with form validation
+  - Browse and display all calculations in a grid layout
+  - View calculation details in a modal
+  - Edit calculations with partial updates
+  - Delete calculations with confirmation
+- **Client-side Validation**: Email format, password requirements, numeric checks
 - **Token Storage**: Secure JWT token handling in localStorage
 - **Responsive Design**: Works on desktop and mobile devices
 
@@ -68,22 +82,23 @@ A modern, full-stack authentication application with JWT-based login and registr
 - **Docker**: Containerization
 - **GitHub Actions**: CI/CD automation
 
-## 📁 Project Structure
+## � Project Structure
 
 ```
 module-13/
 ├── backend/
-│   ├── app.py                 # Flask application and routes
-│   ├── models.py              # SQLAlchemy User model
+│   ├── app.py                 # Flask application and routes (including BREAD endpoints)
+│   ├── models.py              # SQLAlchemy User and Calculation models
 │   ├── schemas.py             # Pydantic validation schemas
 │   ├── utils.py               # JWT utilities and decorators
 │   └── config.py              # Configuration settings
 ├── frontend/
-│   ├── index.html             # Main HTML page
-│   ├── styles.css             # CSS styling
-│   └── script.js              # JavaScript functionality
+│   ├── index.html             # Main HTML page with calculation dashboard
+│   ├── styles.css             # CSS styling (including calculation forms)
+│   └── script.js              # JavaScript functionality (BREAD operations)
 ├── tests/
-│   ├── test_auth.py           # E2E tests
+│   ├── test_auth.py           # E2E authentication tests
+│   ├── test_calculations.py   # E2E calculation BREAD operation tests
 │   └── conftest.py            # Pytest configuration
 ├── .github/
 │   └── workflows/
@@ -92,7 +107,9 @@ module-13/
 ├── docker-compose.yml         # Docker Compose configuration
 ├── requirements.txt           # Python dependencies
 ├── pytest.ini                 # Pytest configuration
-└── README.md                  # This file
+├── README.md                  # This file
+├── BREAD_API_DOCUMENTATION.md # Detailed BREAD API documentation
+└── REFLECTION.md              # Development reflection document
 ```
 
 ## 🔧 Prerequisites
@@ -225,19 +242,31 @@ Click "Already have an account? Login" to access the login form
 ### Run All Tests
 
 ```bash
+pytest tests/ -v
+```
+
+### Run Authentication Tests
+
+```bash
 pytest tests/test_auth.py -v
+```
+
+### Run Calculation BREAD Tests
+
+```bash
+pytest tests/test_calculations.py -v
 ```
 
 ### Run Specific Test Class
 
 ```bash
-pytest tests/test_auth.py::TestRegistration -v
+pytest tests/test_calculations.py::TestCalculationCreate -v
 ```
 
 ### Run Specific Test
 
 ```bash
-pytest tests/test_auth.py::TestRegistration::test_register_with_valid_data -v
+pytest tests/test_calculations.py::TestCalculationCreate::test_create_calculation_add_operation -v
 ```
 
 ### Test Coverage
@@ -246,33 +275,51 @@ Run with coverage report:
 
 ```bash
 pip install pytest-cov
-pytest tests/test_auth.py --cov=backend --cov-report=html
+pytest tests/ --cov=backend --cov-report=html
 ```
 
 ### Test Categories
 
-**Registration Tests:**
-- ✅ Page loads correctly
-- ✅ Register with valid data
-- ✅ Register with short password
-- ✅ Register with mismatched passwords
-- ✅ Register with invalid email
-- ✅ Register with short username
+**Calculation Browse Tests:**
+- ✅ Browse empty calculations list
+- ✅ Browse displays multiple calculations
 
-**Login Tests:**
-- ✅ Page loads correctly
-- ✅ Login with correct credentials
-- ✅ Login with wrong password
-- ✅ Login with invalid email
-- ✅ Login with short password
+**Calculation Create (Add) Tests:**
+- ✅ Create with valid data
+- ✅ Create add operation
+- ✅ Create subtract operation
+- ✅ Create multiply operation
+- ✅ Create divide operation
+- ✅ Reject missing operation
+- ✅ Reject invalid operand
+- ✅ Reject division by zero
+- ✅ Support decimal operands
 
-**Form Toggling Tests:**
-- ✅ Toggle to register form
-- ✅ Toggle to login form
+**Calculation Read Tests:**
+- ✅ Read single calculation
+- ✅ Read calculation details
 
-**Token Tests:**
-- ✅ Token stored after login
-- ✅ Token cleared after logout
+**Calculation Update (Edit) Tests:**
+- ✅ Update operation
+- ✅ Update operands
+- ✅ Update all fields
+- ✅ Reject empty update
+
+**Calculation Delete Tests:**
+- ✅ Delete single calculation
+- ✅ Delete one of multiple calculations
+
+**Security Tests:**
+- ✅ Reject unauthorized access
+- ✅ User data isolation
+- ✅ Invalid ID handling
+
+**Edge Case Tests:**
+- ✅ Large numbers
+- ✅ Negative numbers
+- ✅ Zero operand
+- ✅ Multiple sequential operations
+- ✅ Decimal precision
 
 ## 🔄 CI/CD Pipeline
 
@@ -316,6 +363,29 @@ Image tags:
 - `{commit-sha}`: Specific commit version
 
 ## 📚 API Documentation
+
+### BREAD Operations for Calculations
+
+The application includes complete BREAD (Browse, Read, Edit, Add, Delete) endpoints for managing calculations.
+
+#### Quick Reference
+
+| Operation | Method | Endpoint | Description |
+|-----------|--------|----------|-------------|
+| Browse | GET | /calculations | Get all user's calculations |
+| Read | GET | /calculations/{id} | Get specific calculation |
+| Add | POST | /calculations | Create new calculation |
+| Edit | PATCH | /calculations/{id} | Update calculation |
+| Delete | DELETE | /calculations/{id} | Delete calculation |
+
+#### Operations Supported
+
+- **add**: Addition (operand1 + operand2)
+- **subtract**: Subtraction (operand1 - operand2)
+- **multiply**: Multiplication (operand1 × operand2)
+- **divide**: Division (operand1 ÷ operand2)
+
+**For complete BREAD API documentation, see [BREAD_API_DOCUMENTATION.md](BREAD_API_DOCUMENTATION.md)**
 
 ### Authentication Endpoints
 

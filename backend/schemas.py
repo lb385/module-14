@@ -49,3 +49,59 @@ class TokenResponseSchema(BaseModel):
     access_token: str
     token_type: str
     user: UserResponseSchema
+
+
+# ==================== Calculation Schemas ====================
+
+class CalculationCreateSchema(BaseModel):
+    """Schema for creating a calculation."""
+    operation: str = Field(..., description="Operation type: add, subtract, multiply, divide")
+    operand1: float = Field(..., description="First operand")
+    operand2: float = Field(..., description="Second operand")
+
+    @validator('operation')
+    def validate_operation(cls, v):
+        """Validate that operation is one of the allowed types."""
+        allowed_operations = ['add', 'subtract', 'multiply', 'divide']
+        if v.lower() not in allowed_operations:
+            raise ValueError(f'Operation must be one of {allowed_operations}')
+        return v.lower()
+
+    class Config:
+        from_attributes = True
+
+
+class CalculationUpdateSchema(BaseModel):
+    """Schema for updating a calculation."""
+    operation: Optional[str] = Field(None, description="Operation type: add, subtract, multiply, divide")
+    operand1: Optional[float] = Field(None, description="First operand")
+    operand2: Optional[float] = Field(None, description="Second operand")
+
+    @validator('operation')
+    def validate_operation(cls, v):
+        """Validate that operation is one of the allowed types."""
+        if v is None:
+            return v
+        allowed_operations = ['add', 'subtract', 'multiply', 'divide']
+        if v.lower() not in allowed_operations:
+            raise ValueError(f'Operation must be one of {allowed_operations}')
+        return v.lower()
+
+    class Config:
+        from_attributes = True
+
+
+class CalculationResponseSchema(BaseModel):
+    """Schema for calculation response."""
+    id: int
+    user_id: int
+    operation: str
+    operand1: float
+    operand2: float
+    result: float
+    created_at: str
+    updated_at: str
+
+    class Config:
+        from_attributes = True
+

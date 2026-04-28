@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Integer
+from sqlalchemy import Column, String, DateTime, Integer, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,3 +34,32 @@ class User(Base):
 
     def __repr__(self):
         return f'<User {self.email}>'
+
+
+class Calculation(Base):
+    __tablename__ = 'calculations'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    operation = Column(String(50), nullable=False)  # e.g., 'add', 'subtract', 'multiply', 'divide'
+    operand1 = Column(Float, nullable=False)
+    operand2 = Column(Float, nullable=False)
+    result = Column(Float, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        """Convert calculation object to dictionary."""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'operation': self.operation,
+            'operand1': self.operand1,
+            'operand2': self.operand2,
+            'result': self.result,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+    def __repr__(self):
+        return f'<Calculation {self.id} - {self.operation}>'
